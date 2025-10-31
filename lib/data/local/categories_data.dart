@@ -467,9 +467,9 @@ const String allWordsData = """
     "palabra": "Diploma",
     "pista": "Logro"
   },
- {
+  {
     "categoria": "Escuela / Universidad",
-    "palabra": "Cantina",
+    "palabra": "Cafetería",
     "pista": "Comida"
   },
   {
@@ -926,6 +926,306 @@ const String allWordsData = """
     "categoria": "Cosas Cotidianas",
     "palabra": "Candado",
     "pista": "Cerrar"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "James Rodríguez",
+    "pista": "Golazo"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Radamel Falcao",
+    "pista": "Rugido"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Maradona",
+    "pista": "Leyenda"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Luis Díaz",
+    "pista": "Velocidad"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Pelé",
+    "pista": "Historia"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Cristiano Ronaldo",
+    "pista": "Disciplina"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Lionel Messi",
+    "pista": "Zurda"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Kylian Mbappé",
+    "pista": "Juventud"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Erling Haaland",
+    "pista": "Potencia"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Neymar Jr",
+    "pista": "Estilo"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Leonardo DiCaprio",
+    "pista": "Oscars"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Robert Pattinson",
+    "pista": "Sombras"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Scarlett Johansson",
+    "pista": "Misterio"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Dwayne (La Roca) Johnson",
+    "pista": "Fuerza"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Robert Downey Jr",
+    "pista": "Ingenio"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Chris Hemsworth",
+    "pista": "Trueno"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Gal Gadot",
+    "pista": "Valentía"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Tom Holland",
+    "pista": "Altura"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Margot Robbie",
+    "pista": "Color"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Zendaya",
+    "pista": "Juventud"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Taylor Swift",
+    "pista": "Historias"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Drake",
+    "pista": "Flow"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Beyoncé",
+    "pista": "Energía"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "The Weeknd",
+    "pista": "Luces"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Ariana Grande",
+    "pista": "Voz"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Bad Bunny",
+    "pista": "Rebeldía"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Maluma",
+    "pista": "Areta"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "J Balvin",
+    "pista": "Colores"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Daddy Yankee",
+    "pista": "Gasolina"
+  },
+  {
+    "categoria": "Celebridades",
+    "palabra": "Don Omar",
+    "pista": "El Rey"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Harry Potter",
+    "pista": "Cicatriz"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Hermione Granger",
+    "pista": "Sabiduría"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Ron Weasley",
+    "pista": "Lealtad"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Darth Vader",
+    "pista": "Oscuridad"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Luke Skywalker",
+    "pista": "Destino"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Spider-Man",
+    "pista": "Altura"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Iron Man",
+    "pista": "Tecnología"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Captain America",
+    "pista": "Escudo"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Thor",
+    "pista": "Trueno"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Black Widow",
+    "pista": "Sigilo"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Loki",
+    "pista": "Engaño"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Hulk",
+    "pista": "Furia"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Doctor Strange",
+    "pista": "Portales"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Wanda Maximoff",
+    "pista": "Caos"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Thanos",
+    "pista": "Equilibrio"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Batman",
+    "pista": "Sombras"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Joker",
+    "pista": "Caos"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Superman",
+    "pista": "Vuelo"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Wonder Woman",
+    "pista": "Lazo"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Deadpool",
+    "pista": "Sarcasmo"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Sherlock Holmes",
+    "pista": "Deducción"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Frodo Baggins",
+    "pista": "Anillo"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Gandalf",
+    "pista": "Sabio"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Legolas",
+    "pista": "Precisión"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Katniss Everdeen",
+    "pista": "Flechas"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Walter White",
+    "pista": "Química"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Rick Grimes",
+    "pista": "Supervivencia"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Homer Simpson",
+    "pista": "Donas"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "SpongeBob SquarePants",
+    "pista": "Burbuja"
+  },
+  {
+    "categoria": "Personajes de Cine y TV",
+    "palabra": "Goku",
+    "pista": "Energía"
   }
 ]
 """;

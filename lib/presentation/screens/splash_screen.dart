@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:el_impostor_app/core/constants/app_colors.dart';
+import 'package:el_impostor_app/data/repositories/word_repository.dart';
 import 'package:el_impostor_app/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final WordRepository wordRepository;
+
+  const SplashScreen({super.key, required this.wordRepository});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -18,15 +21,17 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateToHome() {
-    // Simula un tiempo de carga
     Timer(
       const Duration(seconds: 3),
       () {
         if (mounted) {
-          // Navega a la HomeScreen reemplazando la Splash
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(
+                wordRepository: widget.wordRepository,
+              ),
+            ),
           );
         }
       },
@@ -41,15 +46,13 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Muestra tu imagen de splash.png
             Image.asset(
               'assets/images/splash.png',
-              width: 200, // Ajusta el tamaño
-              height: 200, // Ajusta el tamaño
+              width: 200,
+              height: 200,
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 40),
-            // Muestra el spinner de carga
             const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.acentoCTA),
             ),

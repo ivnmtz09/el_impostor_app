@@ -16,7 +16,6 @@ class _PlayerListModalState extends State<PlayerListModal> {
   @override
   void initState() {
     super.initState();
-    // Copia la lista para poder modificarla localmente
     _playerNames = List.from(widget.initialPlayers);
   }
 
@@ -29,14 +28,12 @@ class _PlayerListModalState extends State<PlayerListModal> {
   void _addPlayer() {
     String newName = _nameController.text.trim();
     if (newName.isEmpty) {
-      // Si está vacío, añade "Jugador X"
       newName = 'Jugador ${_playerNames.length + 1}';
     }
     setState(() {
       _playerNames.add(newName);
     });
     _nameController.clear();
-    // Oculta el teclado
     FocusScope.of(context).unfocus();
   }
 
@@ -46,14 +43,75 @@ class _PlayerListModalState extends State<PlayerListModal> {
     });
   }
 
+  void _editPlayer(int index) {
+    final TextEditingController editController = TextEditingController(
+      text: _playerNames[index],
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.fondoDrawer,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          'Editar Jugador',
+          style: TextStyle(color: AppColors.textoPrincipal),
+        ),
+        content: TextField(
+          controller: editController,
+          autofocus: true,
+          style: const TextStyle(color: AppColors.textoPrincipal),
+          decoration: InputDecoration(
+            labelText: 'Nombre',
+            labelStyle: const TextStyle(color: AppColors.textoSecundario),
+            filled: true,
+            fillColor: AppColors.fondoSecundario,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide:
+                  const BorderSide(color: AppColors.acentoCTA, width: 2),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar',
+                style: TextStyle(color: AppColors.textoSecundario)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.acentoCTA,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () {
+              if (editController.text.trim().isNotEmpty) {
+                setState(() {
+                  _playerNames[index] = editController.text.trim();
+                });
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Guardar',
+                style: TextStyle(color: AppColors.textoBoton)),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _saveAndClose() {
-    // Devuelve la lista actualizada a la HomeScreen
     Navigator.of(context).pop(_playerNames);
   }
 
   @override
   Widget build(BuildContext context) {
-    // Se ajusta al teclado
     return Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -68,7 +126,6 @@ class _PlayerListModalState extends State<PlayerListModal> {
         ),
         child: Column(
           children: [
-            // --- Título y Botón de Guardar ---
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -85,6 +142,9 @@ class _PlayerListModalState extends State<PlayerListModal> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.acentoCTA,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     onPressed: _saveAndClose,
                     child: const Text('Guardar',
@@ -93,32 +153,59 @@ class _PlayerListModalState extends State<PlayerListModal> {
                 ],
               ),
             ),
-            const Divider(color: Colors.white24),
-            // --- Lista de Jugadores ---
+            const Divider(color: Colors.white24, height: 1),
             Expanded(
               child: ListView.builder(
                 itemCount: _playerNames.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: const Icon(Icons.person,
-                        color: AppColors.textoSecundario),
-                    title: Text(
-                      _playerNames[index],
-                      style: const TextStyle(color: AppColors.textoPrincipal),
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.fondoSecundario,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.close, color: Colors.red),
-                      // No permite eliminar si solo quedan 3 jugadores
-                      onPressed: _playerNames.length > 3
-                          ? () => _removePlayer(index)
-                          : null,
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: AppColors.acentoCTA.withOpacity(0.2),
+                        child: Text(
+                          '${index + 1}',
+                          style: const TextStyle(
+                            color: AppColors.acentoCTA,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        _playerNames[index],
+                        style: const TextStyle(
+                          color: AppColors.textoPrincipal,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit,
+                                color: AppColors.acentoCTA, size: 20),
+                            onPressed: () => _editPlayer(index),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close,
+                                color: Colors.red, size: 20),
+                            onPressed: _playerNames.length > 3
+                                ? () => _removePlayer(index)
+                                : null,
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
               ),
             ),
-            const Divider(color: Colors.white24),
-            // --- Campo para Añadir Jugador ---
+            const Divider(color: Colors.white24, height: 1),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -137,15 +224,25 @@ class _PlayerListModalState extends State<PlayerListModal> {
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                              color: AppColors.acentoCTA, width: 2),
+                        ),
                       ),
-                      onSubmitted: (_) => _addPlayer(), // Añade con "Enter"
+                      onSubmitted: (_) => _addPlayer(),
                     ),
                   ),
                   const SizedBox(width: 10),
-                  IconButton(
-                    icon: const Icon(Icons.add_circle,
-                        color: AppColors.acentoCTA, size: 40),
-                    onPressed: _addPlayer,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.acentoCTA,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.add, color: AppColors.textoBoton),
+                      onPressed: _addPlayer,
+                    ),
                   ),
                 ],
               ),
