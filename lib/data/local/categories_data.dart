@@ -930,152 +930,152 @@ const String allWordsData = """
   {
     "categoria": "Celebridades",
     "palabra": "James Rodríguez",
-    "pista": "Golazo"
+    "pista": "Colombia"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Radamel Falcao",
-    "pista": "Rugido"
+    "pista": "Goles"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Maradona",
-    "pista": "Leyenda"
+    "pista": "Campeón"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Luis Díaz",
-    "pista": "Velocidad"
+    "pista": "Futbolista"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Pelé",
-    "pista": "Historia"
+    "pista": "Rey"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Cristiano Ronaldo",
-    "pista": "Disciplina"
+    "pista": "Goles"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Lionel Messi",
-    "pista": "Zurda"
+    "pista": "Balón de Oro"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Kylian Mbappé",
-    "pista": "Juventud"
+    "pista": "Velocidad"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Erling Haaland",
-    "pista": "Potencia"
+    "pista": "Goles"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Neymar Jr",
-    "pista": "Estilo"
+    "pista": "Brasil"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Leonardo DiCaprio",
-    "pista": "Oscars"
+    "pista": "Películas"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Robert Pattinson",
-    "pista": "Sombras"
+    "pista": "Actor"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Scarlett Johansson",
-    "pista": "Misterio"
+    "pista": "Películas"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Dwayne (La Roca) Johnson",
-    "pista": "Fuerza"
+    "pista": "Actor"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Robert Downey Jr",
-    "pista": "Ingenio"
+    "pista": "Iron Man"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Chris Hemsworth",
-    "pista": "Trueno"
+    "pista": "Thor"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Gal Gadot",
-    "pista": "Valentía"
+    "pista": "Actriz"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Tom Holland",
-    "pista": "Altura"
+    "pista": "Spider-Man"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Margot Robbie",
-    "pista": "Color"
+    "pista": "Actriz"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Zendaya",
-    "pista": "Juventud"
+    "pista": "Actriz"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Taylor Swift",
-    "pista": "Historias"
+    "pista": "Música"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Drake",
-    "pista": "Flow"
+    "pista": "Cantante"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Beyoncé",
-    "pista": "Energía"
+    "pista": "Reina"
   },
   {
     "categoria": "Celebridades",
     "palabra": "The Weeknd",
-    "pista": "Luces"
+    "pista": "Música"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Ariana Grande",
-    "pista": "Voz"
+    "pista": "Cantante"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Bad Bunny",
-    "pista": "Rebeldía"
+    "pista": "Reguetón"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Maluma",
-    "pista": "Areta"
+    "pista": "Colombia"
   },
   {
     "categoria": "Celebridades",
     "palabra": "J Balvin",
-    "pista": "Colores"
+    "pista": "Reguetón"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Daddy Yankee",
-    "pista": "Gasolina"
+    "pista": "Reguetón"
   },
   {
     "categoria": "Celebridades",
     "palabra": "Don Omar",
-    "pista": "El Rey"
+    "pista": "Cantante"
   },
   {
     "categoria": "Personajes de Cine y TV",
@@ -1090,27 +1090,27 @@ const String allWordsData = """
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Ron Weasley",
-    "pista": "Lealtad"
+    "pista": "Pelirrojo"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Darth Vader",
-    "pista": "Oscuridad"
+    "pista": "Padre"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Luke Skywalker",
-    "pista": "Destino"
+    "pista": "Jedi"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Spider-Man",
-    "pista": "Altura"
+    "pista": "Telaraña"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Iron Man",
-    "pista": "Tecnología"
+    "pista": "Armadura"
   },
   {
     "categoria": "Personajes de Cine y TV",
@@ -1120,57 +1120,57 @@ const String allWordsData = """
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Thor",
-    "pista": "Trueno"
+    "pista": "Martillo"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Black Widow",
-    "pista": "Sigilo"
+    "pista": "Espía"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Loki",
-    "pista": "Engaño"
+    "pista": "Trucos"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Hulk",
-    "pista": "Furia"
+    "pista": "Verde"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Doctor Strange",
-    "pista": "Portales"
+    "pista": "Hechicero"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Wanda Maximoff",
-    "pista": "Caos"
+    "pista": "Poder"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Thanos",
-    "pista": "Equilibrio"
+    "pista": "Guante"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Batman",
-    "pista": "Sombras"
+    "pista": "Murciélago"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Joker",
-    "pista": "Caos"
+    "pista": "Risa"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Superman",
-    "pista": "Vuelo"
+    "pista": "Krypton"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Wonder Woman",
-    "pista": "Lazo"
+    "pista": "Amazonas"
   },
   {
     "categoria": "Personajes de Cine y TV",
@@ -1180,7 +1180,7 @@ const String allWordsData = """
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Sherlock Holmes",
-    "pista": "Deducción"
+    "pista": "Detective"
   },
   {
     "categoria": "Personajes de Cine y TV",
@@ -1195,22 +1195,22 @@ const String allWordsData = """
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Legolas",
-    "pista": "Precisión"
+    "pista": "Elfo"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Katniss Everdeen",
-    "pista": "Flechas"
+    "pista": "Arquera"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Walter White",
-    "pista": "Química"
+    "pista": "Profesor"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Rick Grimes",
-    "pista": "Supervivencia"
+    "pista": "Apocalipsis"
   },
   {
     "categoria": "Personajes de Cine y TV",
@@ -1220,12 +1220,112 @@ const String allWordsData = """
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "SpongeBob SquarePants",
-    "pista": "Burbuja"
+    "pista": "Fondo de Bikini"
   },
   {
     "categoria": "Personajes de Cine y TV",
     "palabra": "Goku",
-    "pista": "Energía"
+    "pista": "Saiyajin"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Breaking Bad",
+    "pista": "Química"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Betty la Fea",
+    "pista": "Diseño"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Los Simpsons",
+    "pista": "Cerveza"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Stranger Things",
+    "pista": "Años 80"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Game of Thrones",
+    "pista": "Invierno"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "The Office",
+    "pista": "Papel"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Friends",
+    "pista": "Apartamento"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "The Mandalorian",
+    "pista": "Cazarrecompensas"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "La Casa de Papel",
+    "pista": "Antifaz"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "The Witcher",
+    "pista": "Monstruo"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "The Walking Dead",
+    "pista": "Sobrevivencia"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Narcos",
+    "pista": "Colombia"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "El Juego del Calamar",
+    "pista": "Deuda"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "The Big Bang Theory",
+    "pista": "Física"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Modern Family",
+    "pista": "Cámara"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "South Park",
+    "pista": "Infancia"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Rick and Morty",
+    "pista": "Portal"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Attack on Titan",
+    "pista": "Muro"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Death Note",
+    "pista": "Cuaderno"
+  },
+  {
+    "categoria": "Series y TV",
+    "palabra": "Demon Slayer",
+    "pista": "Espada"
   }
 ]
 """;

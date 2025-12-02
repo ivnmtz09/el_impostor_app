@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 40),
-            const CircularProgressIndicator(
+            CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.acentoCTA),
             ),
             const SizedBox(height: 20),

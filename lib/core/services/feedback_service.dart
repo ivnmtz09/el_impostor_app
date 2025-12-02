@@ -1,9 +1,12 @@
 import 'package:flutter/services.dart';
 import 'package:vibration/vibration.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class FeedbackService {
   static bool _soundEnabled = true;
   static bool _vibrationEnabled = true;
+  static final AudioPlayer _audioPlayer = AudioPlayer();
+  static final Map<String, AudioPlayer> _soundCache = {};
 
   static void setSoundEnabled(bool enabled) {
     _soundEnabled = enabled;
@@ -15,6 +18,48 @@ class FeedbackService {
 
   static bool get isSoundEnabled => _soundEnabled;
   static bool get isVibrationEnabled => _vibrationEnabled;
+
+  // Precarga de sonidos
+  static Future<void> preloadSounds() async {
+    final sounds = [
+      'button_tap.mp3',
+      'card_flip.mp3',
+      'timer_tick.mp3',
+      'timer_warning.mp3',
+      'vote_submit.mp3',
+      'reveal_impostor.mp3',
+      'reveal_player.mp3',
+      'win.mp3',
+      'lose.mp3',
+    ];
+
+    for (final sound in sounds) {
+      try {
+        final player = AudioPlayer();
+        await player.setSource(AssetSource('sounds/$sound'));
+        _soundCache[sound] = player;
+      } catch (e) {
+        print('Error precargando sonido $sound: $e');
+      }
+    }
+  }
+
+  // Reproducir sonido desde caché
+  static Future<void> _playSound(String soundFile) async {
+    if (!_soundEnabled) return;
+
+    try {
+      final player = _soundCache[soundFile];
+      if (player != null) {
+        await player.resume();
+      } else {
+        // Fallback si no está en caché
+        await _audioPlayer.play(AssetSource('sounds/$soundFile'));
+      }
+    } catch (e) {
+      print('Error reproduciendo sonido $soundFile: $e');
+    }
+  }
 
   // Vibración ligera para tap
   static Future<void> lightVibration() async {
@@ -88,20 +133,77 @@ class FeedbackService {
     }
   }
 
-  // Sonido simple usando HapticFeedback como placeholder
-  // En producción, usa AudioPlayers con archivos de audio reales
+  static Future<void> victoryVibration() async {
+    if (!_vibrationEnabled) return;
+    if (await Vibration.hasVibrator() ?? false) {
+      await Vibration.vibrate(pattern: [0, 100, 200, 100, 200, 400]);
+    }
+  }
+
+  static Future<void> defeatVibration() async {
+    if (!_vibrationEnabled) return;
+    if (await Vibration.hasVibrator() ?? false) {
+      await Vibration.vibrate(pattern: [0, 500, 100, 500]);
+    }
+  }
+
+  // === SONIDOS ===
+
+  static Future<void> playButtonTap() async {
+    await _playSound('button_tap.mp3');
+  }
+
+  static Future<void> playCardFlip() async {
+    await _playSound('card_flip.mp3');
+  }
+
+  static Future<void> playTimerTick() async {
+    await _playSound('timer_tick.mp3');
+  }
+
+  static Future<void> playTimerWarning() async {
+    await _playSound('timer_warning.mp3');
+  }
+
+  static Future<void> playVoteSubmit() async {
+    await _playSound('vote_submit.mp3');
+  }
+
+  static Future<void> playRevealImpostor() async {
+    await _playSound('reveal_impostor.mp3');
+  }
+
+  static Future<void> playRevealPlayer() async {
+    await _playSound('reveal_player.mp3');
+  }
+
+  static Future<void> playWinSound() async {
+    await _playSound('win.mp3');
+  }
+
+  static Future<void> playLoseSound() async {
+    await _playSound('lose.mp3');
+  }
+
+  // Métodos legacy para compatibilidad
   static Future<void> playClickSound() async {
-    if (!_soundEnabled) return;
-    HapticFeedback.selectionClick();
+    await playButtonTap();
   }
 
   static Future<void> playSuccessSound() async {
-    if (!_soundEnabled) return;
-    HapticFeedback.mediumImpact();
+    await playWinSound();
   }
 
   static Future<void> playErrorSound() async {
-    if (!_soundEnabled) return;
-    HapticFeedback.heavyImpact();
+    await playLoseSound();
+  }
+
+  // Limpieza
+  static Future<void> dispose() async {
+    await _audioPlayer.dispose();
+    for (final player in _soundCache.values) {
+      await player.dispose();
+    }
+    _soundCache.clear();
   }
 }

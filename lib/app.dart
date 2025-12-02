@@ -1,7 +1,9 @@
-import 'package:el_impostor_app/core/constants/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:el_impostor_app/core/constants/app_theme.dart';
+import 'package:el_impostor_app/core/providers/theme_provider.dart';
 import 'package:el_impostor_app/data/repositories/word_repository.dart';
 import 'package:el_impostor_app/presentation/screens/splash_screen.dart';
-import 'package:flutter/material.dart';
 
 class ElImpostorApp extends StatelessWidget {
   final WordRepository wordRepository;
@@ -10,40 +12,20 @@ class ElImpostorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'El Impostor',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.fondoPrincipal,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.fondoPrincipal,
-          brightness: Brightness.dark,
-          primary: AppColors.fondoPrincipal,
-          secondary: AppColors.acentoCTA,
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.fondoPrincipal,
-          elevation: 0,
-          centerTitle: true,
-          iconTheme: IconThemeData(
-            color: AppColors.textoPrincipal,
-          ),
-          titleTextStyle: TextStyle(
-            color: AppColors.textoPrincipal,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(color: AppColors.textoPrincipal, fontSize: 16),
-          headlineLarge: TextStyle(
-            color: AppColors.textoPrincipal,
-            fontWeight: FontWeight.bold,
-          ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) => MaterialApp(
+          title: 'El Impostor',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: SplashScreen(wordRepository: wordRepository),
         ),
       ),
-      home: SplashScreen(wordRepository: wordRepository),
     );
   }
 }

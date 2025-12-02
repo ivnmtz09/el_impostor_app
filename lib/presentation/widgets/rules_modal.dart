@@ -29,7 +29,7 @@ class RulesModal extends StatelessWidget {
             // Header
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.acentoCTA,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20),
@@ -38,10 +38,10 @@ class RulesModal extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.help_outline,
+                  Icon(Icons.help_outline,
                       color: AppColors.textoBoton, size: 28),
                   const SizedBox(width: 12),
-                  const Text(
+                  Text(
                     '¿Cómo Jugar?',
                     style: TextStyle(
                       color: AppColors.textoBoton,
@@ -51,7 +51,7 @@ class RulesModal extends StatelessWidget {
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.close, color: AppColors.textoBoton),
+                    icon: Icon(Icons.close, color: AppColors.textoBoton),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -123,7 +123,7 @@ class RulesModal extends StatelessWidget {
                   minimumSize: const Size(double.infinity, 50),
                 ),
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text(
+                child: Text(
                   '¡ENTENDIDO!',
                   style: TextStyle(
                     fontSize: 18,
@@ -162,7 +162,7 @@ class RulesModal extends StatelessWidget {
             child: Center(
               child: Text(
                 number,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textoBoton,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -183,7 +183,7 @@ class RulesModal extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textoPrincipal,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -195,7 +195,7 @@ class RulesModal extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textoSecundario,
                     fontSize: 15,
                     height: 1.4,

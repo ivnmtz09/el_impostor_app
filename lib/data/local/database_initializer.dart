@@ -16,6 +16,9 @@ class DatabaseInitializer {
       print('✅ Datos iniciales cargados correctamente');
     } else {
       print('✓ Base de datos ya contiene ${words.length} palabras');
+      // Importar nuevas palabras que puedan haber sido agregadas a categories_data.dart
+      print('🔄 Verificando nuevas palabras...');
+      await importWordsFromJson(database, allWordsData);
     }
 
     _isInitialized = true;

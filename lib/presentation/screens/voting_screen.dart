@@ -1,7 +1,11 @@
-import 'package:el_impostor_app/core/constants/app_colors.dart';
-import 'package:el_impostor_app/presentation/screens/game_result_screen.dart';
-import 'package:el_impostor_app/presentation/screens/role_reveal_screen.dart';
+import 'dart:math';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:el_impostor_app/core/constants/app_colors.dart';
+import 'package:el_impostor_app/core/services/feedback_service.dart';
+import 'package:el_impostor_app/presentation/widgets/animated_button.dart';
+import 'package:el_impostor_app/presentation/screens/role_reveal_screen.dart';
+import 'package:el_impostor_app/presentation/screens/game_result_screen.dart';
 
 class VotingScreen extends StatefulWidget {
   final List<PlayerRole> playerRoles;
@@ -16,22 +20,35 @@ class VotingScreen extends StatefulWidget {
 }
 
 class _VotingScreenState extends State<VotingScreen> {
-  String? _selectedPlayerName; // El nombre del jugador seleccionado para votar
+  late ConfettiController _confettiController;
+  PlayerRole? _selectedPlayer;
 
-  void _confirmVote() {
-    if (_selectedPlayerName == null) return;
+  @override
+  void initState() {
+    super.initState();
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 5));
+  }
 
-    // Busca el PlayerRole del jugador votado
-    final PlayerRole votedPlayer = widget.playerRoles
-        .firstWhere((role) => role.name == _selectedPlayerName);
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
 
-    // Navega a la pantalla de resultados
+  void _vote() {
+    if (_selectedPlayer == null) return;
+
+    FeedbackService.playVoteSubmit();
+    FeedbackService.mediumVibration();
+
+    // Navegar a pantalla de resultados
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => GameResultScreen(
           playerRoles: widget.playerRoles,
-          votedPlayer: votedPlayer,
+          votedPlayer: _selectedPlayer!,
         ),
       ),
     );
@@ -40,102 +57,153 @@ class _VotingScreenState extends State<VotingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.fondoSecundario,
-      appBar: AppBar(
-        title: const Text('VOTACIÓN'),
-        backgroundColor: AppColors.fondoSecundario,
-        automaticallyImplyLeading: false,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      backgroundColor: AppColors.fondoPrincipal,
+      body: Stack(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              '¿Quién creen que es el impostor?',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.textoPrincipal,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+          // Confetti
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirection: pi / 2,
+              maxBlastForce: 5,
+              minBlastForce: 1,
+              emissionFrequency: 0.05,
+              numberOfParticles: 50,
+              gravity: 0.1,
+              shouldLoop: false,
+              colors: const [
+                Colors.green,
+                Colors.blue,
+                Colors.pink,
+                Colors.orange,
+                Colors.purple
+              ],
             ),
           ),
-          // --- Cuadrícula de Jugadores ---
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 2 columnas
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 2.5, // Hace los botones más anchos que altos
-              ),
-              itemCount: widget.playerRoles.length,
-              itemBuilder: (context, index) {
-                final playerName = widget.playerRoles[index].name;
-                final bool isSelected = _selectedPlayerName == playerName;
 
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedPlayerName = playerName;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.acentoCTA
-                          : AppColors.fondoPrincipal,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected ? Colors.white : Colors.transparent,
-                        width: 2,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        playerName,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: isSelected
-                              ? AppColors.textoBoton
-                              : AppColors.textoPrincipal,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          // --- Botón de Confirmar Voto ---
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.acentoCTA,
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                // El botón se deshabilita si nadie ha sido seleccionado
-                disabledBackgroundColor: Colors.grey[600],
+          // Contenido principal
+          Column(
+            children: [
+              const SizedBox(height: 40),
+              // Imagen decorativa
+              Image.asset(
+                'assets/images/secret_file.png',
+                height: 100,
+                fit: BoxFit.contain,
               ),
-              onPressed: _selectedPlayerName != null ? _confirmVote : null,
-              child: Text(
-                'CONFIRMAR VOTO',
+              const SizedBox(height: 20),
+              // Título
+              Text(
+                '¡HORA DE VOTAR!',
                 style: TextStyle(
-                  fontSize: 18,
+                  color: AppColors.acentoCTA,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: _selectedPlayerName != null
-                      ? AppColors.textoBoton
-                      : Colors.grey[800],
                 ),
               ),
-            ),
+              const SizedBox(height: 40),
+              // Lista de jugadores
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: widget.playerRoles.length,
+                  itemBuilder: (context, index) {
+                    final playerRole = widget.playerRoles[index];
+                    final isSelected = playerRole == _selectedPlayer;
+                    return TweenAnimationBuilder(
+                      tween: Tween<double>(begin: 0.0, end: 1.0),
+                      duration: Duration(milliseconds: 200 + (index * 50)),
+                      builder: (context, double value, child) {
+                        return Transform.translate(
+                          offset: Offset(0, 20 * (1 - value)),
+                          child: Opacity(
+                            opacity: value,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.only(bottom: 12),
+                        transform: Matrix4.identity()
+                          ..scale(isSelected ? 1.05 : 1.0),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() => _selectedPlayer = playerRole);
+                              FeedbackService.lightVibration();
+                              FeedbackService.playVoteSubmit();
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.acentoCTA.withOpacity(0.2)
+                                    : AppColors.fondoSecundario,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? AppColors.acentoCTA
+                                      : Colors.transparent,
+                                  width: 2,
+                                ),
+                                boxShadow: isSelected
+                                    ? [
+                                        BoxShadow(
+                                          color: AppColors.acentoCTA.withOpacity(0.3),
+                                          blurRadius: 8,
+                                          spreadRadius: 2,
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.person,
+                                    color: isSelected
+                                        ? AppColors.acentoCTA
+                                        : AppColors.textoPrincipal,
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Text(
+                                    playerRole.name,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? AppColors.acentoCTA
+                                          : AppColors.textoPrincipal,
+                                      fontSize: 18,
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              // Botón de votar
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: AnimatedButton(
+                  text: 'VOTAR',
+                  icon: Icons.how_to_vote,
+                  onPressed: _vote,
+                  enabled: _selectedPlayer != null,
+                  variant: AnimatedButtonVariant.primary,
+                  width: double.infinity,
+                ),
+              ),
+            ],
           ),
         ],
       ),

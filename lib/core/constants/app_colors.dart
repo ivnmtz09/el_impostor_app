@@ -37,25 +37,25 @@ class AppColors {
 
   // --- COLORES PARA ROLES (DISCRETOS) ---
 
-  // Impostor - Rojo muy suave y oscuro
-  static const Color impostorBgDark = Color(0xFF3A2828); // Rojo oscuro discreto
-  static const Color impostorTextDark = Color(0xFFFFABAB); // Rojo rosado suave
-  static const Color impostorBorderDark = Color(0xFF5A3838);
+  // Impostor - Rojo muy suave y oscuro (menos reflectante)
+  static const Color impostorBgDark = Color(0xFF2A1F1F); // Rojo más oscuro y menos reflectante
+  static const Color impostorTextDark = Color(0xFFD4A5A5); // Rojo más oscuro y menos brillante
+  static const Color impostorBorderDark = Color(0xFF4A2F2F); // Borde más oscuro
 
-  // No-Impostor - Verde muy suave y oscuro
-  static const Color playerBgDark = Color(0xFF283A2E); // Verde oscuro discreto
-  static const Color playerTextDark = Color(0xFFA5D6A7); // Verde claro suave
-  static const Color playerBorderDark = Color(0xFF385A42);
+  // No-Impostor - Verde muy suave y oscuro (menos reflectante)
+  static const Color playerBgDark = Color(0xFF1F2A23); // Verde más oscuro y menos reflectante
+  static const Color playerTextDark = Color(0xFF8FB893); // Verde más oscuro y menos brillante
+  static const Color playerBorderDark = Color(0xFF2F4A35); // Borde más oscuro
 
-  // Impostor - Modo claro
-  static const Color impostorBgLight = Color(0xFFFFF3F3); // Rosa muy claro
-  static const Color impostorTextLight = Color(0xFFC62828); // Rojo oscuro
-  static const Color impostorBorderLight = Color(0xFFFFCDD2);
+  // Impostor - Modo claro (menos reflectante)
+  static const Color impostorBgLight = Color(0xFFF5E8E8); // Rosa más apagado
+  static const Color impostorTextLight = Color(0xFF8B1A1A); // Rojo más oscuro y menos brillante
+  static const Color impostorBorderLight = Color(0xFFE8C5C5); // Borde más apagado
 
-  // No-Impostor - Modo claro
-  static const Color playerBgLight = Color(0xFFF1F8F4); // Verde muy claro
-  static const Color playerTextLight = Color(0xFF2E7D32); // Verde oscuro
-  static const Color playerBorderLight = Color(0xFFC8E6C9);
+  // No-Impostor - Modo claro (menos reflectante)
+  static const Color playerBgLight = Color(0xFFE8F0EA); // Verde más apagado
+  static const Color playerTextLight = Color(0xFF1F5A22); // Verde más oscuro y menos brillante
+  static const Color playerBorderLight = Color(0xFFB8D5BC); // Borde más apagado
 
   // --- GETTERS DINÁMICOS (según tema) ---
 

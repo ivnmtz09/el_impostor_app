@@ -1,12 +1,19 @@
 import 'package:el_impostor_app/core/constants/app_colors.dart';
 import 'package:el_impostor_app/core/models/word_model.dart';
 import 'package:el_impostor_app/core/services/feedback_service.dart';
+import 'package:el_impostor_app/core/services/player_storage_service.dart';
+import 'package:el_impostor_app/core/services/settings_storage_service.dart';
 import 'package:el_impostor_app/data/repositories/word_repository.dart';
 import 'package:el_impostor_app/presentation/screens/role_reveal_screen.dart';
 import 'package:el_impostor_app/presentation/widgets/category_select_modal.dart';
 import 'package:el_impostor_app/presentation/widgets/player_list_modal.dart';
 import 'package:el_impostor_app/presentation/widgets/rules_modal.dart';
+import 'package:el_impostor_app/presentation/widgets/animated_button.dart';
+import 'package:el_impostor_app/presentation/widgets/page_transitions.dart';
+import 'package:el_impostor_app/presentation/widgets/shimmer_effect.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:el_impostor_app/core/providers/theme_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final WordRepository wordRepository;
@@ -26,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen>
   bool _soundEffects = true;
   bool _vibration = true;
   bool _impostorHint = true;
-  bool _isDarkMode = true;
   List<String> _selectedCategories = [];
   bool _isLoading = true;
   late AnimationController _fabAnimationController;
@@ -35,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _loadGameData();
+    _initializeGame();
     _fabAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -45,6 +51,88 @@ class _HomeScreenState extends State<HomeScreen>
       curve: Curves.easeInOut,
     );
     _fabAnimationController.forward();
+  }
+
+  Future<void> _initializeGame() async {
+    // Cargar datos secuencialmente para evitar condiciones de carrera
+    await _loadGameData();
+    await _loadSavedPlayers();
+    await _loadSettings();
+
+    // Validación final para asegurar que la configuración es consistente
+    if (mounted) {
+      setState(() {
+        final maxImpostors = _calculateMaxImpostors(_playerNames.length).toDouble();
+        if (_impostorCount > maxImpostors) {
+          _impostorCount = maxImpostors;
+        }
+      });
+    }
+  }
+
+  /// Carga los nombres de jugadores guardados
+  Future<void> _loadSavedPlayers() async {
+    try {
+      final savedNames = await PlayerStorageService.loadPlayerNames();
+      if (savedNames.isNotEmpty) {
+        setState(() {
+          _playerNames = savedNames;
+          // Ajustar impostores según la cantidad de jugadores
+          _impostorCount = _calculateMaxImpostors(_playerNames.length).toDouble();
+        });
+      }
+    } catch (e) {
+      print('Error al cargar jugadores guardados: $e');
+    }
+  }
+
+  /// Carga los ajustes guardados
+  Future<void> _loadSettings() async {
+    try {
+      final settings = await SettingsStorageService.loadSettings();
+      if (!mounted) return;
+      setState(() {
+        _soundEffects = settings['soundEffects'];
+        _vibration = settings['vibration'];
+        _impostorHint = settings['impostorHint'];
+        _debateTime = settings['debateTime'];
+        if (settings['impostorCount'] != null) {
+          _impostorCount = settings['impostorCount'];
+        }
+      });
+      
+      // Aplicar configuraciones globales
+      FeedbackService.setSoundEnabled(_soundEffects);
+      FeedbackService.setVibrationEnabled(_vibration);
+    } catch (e) {
+      print('Error al cargar ajustes: $e');
+    }
+  }
+
+  /// Guarda los ajustes actuales
+  Future<void> _saveSettings() async {
+    try {
+      await SettingsStorageService.saveSettings(
+        soundEffects: _soundEffects,
+        vibration: _vibration,
+        impostorHint: _impostorHint,
+        debateTime: _debateTime,
+        impostorCount: _impostorCount,
+      );
+    } catch (e) {
+      print('Error al guardar ajustes: $e');
+    }
+  }
+
+  /// Calcula el máximo de impostores según la cantidad de jugadores
+  int _calculateMaxImpostors(int playerCount) {
+    if (playerCount <= 5) {
+      return 1;
+    } else if (playerCount <= 15) {
+      return 2;
+    } else {
+      return 3;
+    }
   }
 
   @override
@@ -99,12 +187,14 @@ class _HomeScreenState extends State<HomeScreen>
     if (updatedNames != null && updatedNames.isNotEmpty) {
       setState(() {
         _playerNames = updatedNames;
-        if (_impostorCount >= _playerNames.length) {
-          _impostorCount = (_playerNames.length - 1)
-              .clamp(1.0, _playerNames.length.toDouble())
-              .toDouble();
+        // Calcular y ajustar el máximo de impostores según las nuevas reglas
+        final maxImpostors = _calculateMaxImpostors(_playerNames.length);
+        if (_impostorCount > maxImpostors) {
+          _impostorCount = maxImpostors.toDouble();
         }
       });
+      // Guardar los nombres actualizados
+      await PlayerStorageService.savePlayerNames(_playerNames);
     }
   }
 
@@ -153,8 +243,8 @@ class _HomeScreenState extends State<HomeScreen>
       if (mounted) {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => RoleRevealScreen(
+          FadeSlideTransition(
+            page: RoleRevealScreen(
               playerNames: _playerNames,
               impostorCount: _impostorCount.toInt(),
               debateTimeMinutes: _debateTime.toInt(),
@@ -181,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
+      return Scaffold(
         body: Center(
           child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(AppColors.acentoCTA),
@@ -190,7 +280,8 @@ class _HomeScreenState extends State<HomeScreen>
       );
     }
 
-    double maxImpostors = (_playerNames.length - 1).clamp(1, 20).toDouble();
+    // Calcular máximo de impostores según las nuevas reglas
+    final maxImpostors = _calculateMaxImpostors(_playerNames.length).toDouble();
     int impostorDivisions = ((maxImpostors - 1).toInt().clamp(1, 10)).toInt();
     if (_impostorCount > maxImpostors) {
       _impostorCount = maxImpostors;
@@ -272,7 +363,10 @@ class _HomeScreenState extends State<HomeScreen>
                     impostorDivisions,
                     (newValue) {
                       FeedbackService.lightVibration();
-                      setState(() => _impostorCount = newValue);
+                      setState(() {
+                        _impostorCount = newValue;
+                        _saveSettings();
+                      });
                     },
                   ),
                 ),
@@ -300,7 +394,10 @@ class _HomeScreenState extends State<HomeScreen>
                     9,
                     (newValue) {
                       FeedbackService.lightVibration();
-                      setState(() => _debateTime = newValue);
+                      setState(() {
+                        _debateTime = newValue;
+                        _saveSettings();
+                      });
                     },
                   ),
                 ),
@@ -319,7 +416,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ],
                   ),
                   child: SwitchListTile(
-                    title: const Text('Pista para Impostores',
+                    title: Text('Pista para Impostores',
                         style: TextStyle(
                             color: AppColors.textoPrincipal,
                             fontSize: 18,
@@ -328,7 +425,7 @@ class _HomeScreenState extends State<HomeScreen>
                       _impostorHint
                           ? 'Los impostores recibirán una pista'
                           : 'Los impostores no recibirán pista',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textoSecundario,
                         fontSize: 13,
                       ),
@@ -336,9 +433,12 @@ class _HomeScreenState extends State<HomeScreen>
                     value: _impostorHint,
                     onChanged: (bool value) {
                       FeedbackService.lightVibration();
-                      setState(() => _impostorHint = value);
+                      setState(() {
+                        _impostorHint = value;
+                        _saveSettings();
+                      });
                     },
-                    activeColor: AppColors.acentoCTA,
+                    activeThumbColor: AppColors.acentoCTA,
                     inactiveTrackColor: Colors.grey[700],
                     tileColor: AppColors.fondoSecundario,
                     shape: RoundedRectangleBorder(
@@ -386,36 +486,14 @@ class _HomeScreenState extends State<HomeScreen>
                     ],
                   ),
                 ),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.acentoCTA,
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    minimumSize: const Size(double.infinity, 60),
-                    elevation: 8,
-                    shadowColor: AppColors.acentoCTA.withOpacity(0.4),
-                  ),
-                  onPressed: _startGame,
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.play_arrow_rounded,
-                        color: AppColors.textoBoton,
-                        size: 28,
-                      ),
-                      SizedBox(width: 12),
-                      Text(
-                        'INICIAR JUEGO',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textoBoton,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
+                child: PulseEffect(
+                  child: AnimatedButton(
+                    text: 'INICIAR JUEGO',
+                    icon: Icons.play_arrow_rounded,
+                    onPressed: _startGame,
+                    variant: AnimatedButtonVariant.primary,
+                    width: double.infinity,
+                    height: 60,
                   ),
                 ),
               ),
@@ -435,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen>
           Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(24, 60, 24, 24),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -456,14 +534,14 @@ class _HomeScreenState extends State<HomeScreen>
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.tune,
                     color: AppColors.textoPrincipal,
                     size: 32,
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Configuración',
                   style: TextStyle(
                     color: AppColors.textoPrincipal,
@@ -488,6 +566,56 @@ class _HomeScreenState extends State<HomeScreen>
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
+                // Tema Oscuro/Claro
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.fondoSecundario,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Consumer<ThemeProvider>(
+                    builder: (context, themeProvider, _) => SwitchListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 4),
+                      title: Text('Modo Oscuro',
+                          style: TextStyle(
+                            color: AppColors.textoPrincipal,
+                            fontWeight: FontWeight.w500,
+                          )),
+                      subtitle: Text(
+                        themeProvider.isDarkMode ? 'Activado' : 'Desactivado',
+                        style: TextStyle(
+                            color: AppColors.textoSecundario, fontSize: 12),
+                      ),
+                      value: themeProvider.isDarkMode,
+                      onChanged: (value) {
+                        themeProvider.toggleTheme();
+                        FeedbackService.lightVibration();
+                      },
+                      activeThumbColor: AppColors.acentoCTA,
+                      inactiveTrackColor: Colors.grey[700],
+                      secondary: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: themeProvider.isDarkMode
+                              ? AppColors.acentoCTA.withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          themeProvider.isDarkMode
+                              ? Icons.dark_mode
+                              : Icons.light_mode,
+                          color: themeProvider.isDarkMode
+                              ? AppColors.acentoCTA
+                              : AppColors.textoSecundario,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
                 // Efectos de Sonido
                 Container(
                   margin:
@@ -499,25 +627,29 @@ class _HomeScreenState extends State<HomeScreen>
                   child: SwitchListTile(
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    title: const Text('Efectos de Sonido',
+                    title: Text('Efectos de Sonido',
                         style: TextStyle(
                           color: AppColors.textoPrincipal,
                           fontWeight: FontWeight.w500,
                         )),
                     subtitle: Text(
                       _soundEffects ? 'Activado' : 'Desactivado',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textoSecundario,
                         fontSize: 12,
                       ),
                     ),
                     value: _soundEffects,
                     onChanged: (bool value) {
-                      setState(() => _soundEffects = value);
+                      FeedbackService.playButtonTap();
+                      setState(() {
+                        _soundEffects = value;
+                        _saveSettings();
+                      });
                       FeedbackService.setSoundEnabled(value);
                       FeedbackService.lightVibration();
                     },
-                    activeColor: AppColors.acentoCTA,
+                    activeThumbColor: AppColors.acentoCTA,
                     inactiveTrackColor: Colors.grey[700],
                     secondary: Container(
                       padding: const EdgeInsets.all(8),
@@ -548,25 +680,29 @@ class _HomeScreenState extends State<HomeScreen>
                   child: SwitchListTile(
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    title: const Text('Vibración',
+                    title: Text('Vibración',
                         style: TextStyle(
                           color: AppColors.textoPrincipal,
                           fontWeight: FontWeight.w500,
                         )),
                     subtitle: Text(
                       _vibration ? 'Activado' : 'Desactivado',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textoSecundario,
                         fontSize: 12,
                       ),
                     ),
                     value: _vibration,
                     onChanged: (bool value) {
-                      setState(() => _vibration = value);
+                      FeedbackService.playButtonTap();
+                      setState(() {
+                        _vibration = value;
+                        _saveSettings();
+                      });
                       FeedbackService.setVibrationEnabled(value);
                       if (value) FeedbackService.mediumVibration();
                     },
-                    activeColor: AppColors.acentoCTA,
+                    activeThumbColor: AppColors.acentoCTA,
                     inactiveTrackColor: Colors.grey[700],
                     secondary: Container(
                       padding: const EdgeInsets.all(8),
@@ -608,23 +744,26 @@ class _HomeScreenState extends State<HomeScreen>
                         color: AppColors.acentoCTA.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.help_outline,
-                          color: AppColors.acentoCTA),
+                      child: Icon(Icons.help_outline,
+                          color: AppColors.acentoCTA,
                     ),
-                    title: const Text('Cómo Jugar',
+                  ),
+                    title: Text('Cómo Jugar',
                         style: TextStyle(
                           color: AppColors.textoPrincipal,
                           fontWeight: FontWeight.w500,
                         )),
-                    subtitle: const Text('Aprende las reglas del juego',
+                    subtitle: Text('Aprende las reglas del juego',
                         style: TextStyle(
                             color: AppColors.textoSecundario, fontSize: 12)),
-                    trailing: const Icon(Icons.arrow_forward_ios,
-                        color: AppColors.textoSecundario, size: 16),
-                    onTap: () {
-                      Navigator.pop(context);
-                      _showRulesModal(context);
-                    },
+                    trailing: InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showRulesModal(context);
+                      },
+                      child: Icon(Icons.arrow_forward_ios,
+                          color: AppColors.textoSecundario, size: 16),
+                    ),
                   ),
                 ),
               ],
@@ -648,7 +787,7 @@ class _HomeScreenState extends State<HomeScreen>
                     Icon(Icons.code,
                         color: AppColors.acentoCTA.withOpacity(0.8), size: 18),
                     const SizedBox(width: 8),
-                    const Text(
+                    Text(
                       'Desarrollado con',
                       style: TextStyle(
                         color: AppColors.textoSecundario,
@@ -661,7 +800,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'IvnMtz09',
                   style: TextStyle(
                     color: AppColors.acentoCTA,
@@ -696,7 +835,7 @@ class _HomeScreenState extends State<HomeScreen>
           children: [
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textoPrincipal,
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -710,7 +849,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
               child: Text(
                 '${value.toInt()}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.acentoCTA,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -780,18 +919,18 @@ class _HomeScreenState extends State<HomeScreen>
               const SizedBox(width: 16),
             ],
             Text(title,
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.textoPrincipal,
                     fontSize: 18,
                     fontWeight: FontWeight.w500)),
             const Spacer(),
             Text(value,
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.acentoCTA,
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
             const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward_ios,
+            Icon(Icons.arrow_forward_ios,
                 color: AppColors.textoSecundario, size: 16),
           ],
         ),

@@ -1,8 +1,10 @@
-import 'dart:math';
 import 'package:el_impostor_app/core/constants/app_colors.dart';
+import 'package:el_impostor_app/core/constants/app_animations.dart';
 import 'package:el_impostor_app/core/models/word_model.dart';
 import 'package:el_impostor_app/core/services/feedback_service.dart';
 import 'package:el_impostor_app/presentation/screens/debate_timer_screen.dart';
+import 'package:el_impostor_app/presentation/widgets/animated_button.dart';
+import 'package:el_impostor_app/presentation/widgets/page_transitions.dart';
 import 'package:flutter/material.dart';
 
 class PlayerRole {
@@ -52,7 +54,7 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
     super.initState();
     _assignRoles();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: AppAnimations.cardFlip,
       vsync: this,
     );
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
@@ -99,8 +101,8 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
     FeedbackService.mediumVibration();
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) => DebateTimerScreen(
+      FadeSlideTransition(
+        page: DebateTimerScreen(
           playerRoles: _assignedRoles,
           debateTimeMinutes: widget.debateTimeMinutes,
         ),
@@ -115,9 +117,12 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
     final PlayerRole currentPlayer = _assignedRoles[_currentPlayerIndex];
     if (currentPlayer.isImpostor) {
       FeedbackService.impostorRevealVibration();
+      FeedbackService.playRevealImpostor();
     } else {
       FeedbackService.playerRevealVibration();
+      FeedbackService.playRevealPlayer();
     }
+    FeedbackService.playCardFlip();
   }
 
   @override
@@ -206,9 +211,9 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
                                   ? AppColors.impostorBorder
                                   : AppColors.playerBorder)
                               : AppColors.acentoCTA)
-                          .withOpacity(0.2),
-                      blurRadius: 15,
-                      spreadRadius: 1,
+                          .withOpacity(0.1), // Reducido de 0.2 a 0.1 para menos reflectancia
+                      blurRadius: 10, // Reducido de 15 a 10
+                      spreadRadius: 0, // Reducido de 1 a 0
                     ),
                   ],
                 ),
@@ -228,37 +233,13 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
             AnimatedOpacity(
               opacity: _isCardRevealed ? 1.0 : 0.4,
               duration: const Duration(milliseconds: 300),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.acentoCTA,
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  elevation: _isCardRevealed ? 8 : 0,
-                ),
-                onPressed: _isCardRevealed ? _nextPlayer : null,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      isLastPlayer ? 'EMPEZAR JUEGO' : 'SIGUIENTE JUGADOR',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: _isCardRevealed
-                            ? AppColors.textoBoton
-                            : Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Icon(
-                      isLastPlayer ? Icons.play_arrow : Icons.arrow_forward,
-                      color: _isCardRevealed
-                          ? AppColors.textoBoton
-                          : Colors.grey[600],
-                    ),
-                  ],
-                ),
+              child: AnimatedButton(
+                text: isLastPlayer ? 'EMPEZAR JUEGO' : 'SIGUIENTE JUGADOR',
+                icon: isLastPlayer ? Icons.play_arrow : Icons.arrow_forward,
+                onPressed: _isCardRevealed ? _nextPlayer : () {},
+                enabled: _isCardRevealed,
+                variant: AnimatedButtonVariant.primary,
+                width: double.infinity,
               ),
             ),
           ],
@@ -330,7 +311,7 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
 
           // Texto del rol con colores discretos
           Text(
-            role.isImpostor ? 'IMPOSTOR' : 'NO-IMPOSTOR',
+            role.isImpostor ? 'IMPOSTOR' : 'CIVIL',
             style: TextStyle(
               color: role.isImpostor
                   ? AppColors.impostorText
@@ -362,16 +343,16 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
           ),
           const SizedBox(height: 12),
 
-          // Contenedor con el texto principal
+          // Contenedor con el texto principal (menos reflectante)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: AppColors.fondoSecundario.withOpacity(0.5),
+              color: AppColors.fondoSecundario.withOpacity(0.3), // Reducido de 0.5 a 0.3
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: role.isImpostor
+                color: (role.isImpostor
                     ? AppColors.impostorBorder
-                    : AppColors.playerBorder,
+                    : AppColors.playerBorder).withOpacity(0.5), // Reducida opacidad del borde
                 width: 1,
               ),
             ),
@@ -381,7 +362,7 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
                   : role.word,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.textoPrincipal,
+                color: AppColors.textoPrincipal.withOpacity(0.9), // Ligeramente más apagado
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),

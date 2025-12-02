@@ -69,6 +69,16 @@ class _DebateTimerScreenState extends State<DebateTimerScreen>
           FeedbackService.timeWarningVibration();
         }
 
+        // Sonido de advertencia a los 15 segundos
+        if (_remainingSeconds == 15) {
+          FeedbackService.playTimerWarning();
+        }
+
+        // Sonido de tick a los 3 segundos
+        if (_remainingSeconds == 3) {
+          FeedbackService.playTimerTick();
+        }
+
         // Advertencia cada 10 segundos en los últimos 30
         if (_remainingSeconds <= 30 && _remainingSeconds % 10 == 0) {
           FeedbackService.lightVibration();
