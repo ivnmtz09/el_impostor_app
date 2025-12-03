@@ -63,25 +63,14 @@ class _DebateTimerScreenState extends State<DebateTimerScreen>
       if (_remainingSeconds > 0) {
         setState(() => _remainingSeconds--);
 
-        // Advertencia a los 30 segundos
-        if (_remainingSeconds == 30 && !_showWarning) {
-          setState(() => _showWarning = true);
-          FeedbackService.timeWarningVibration();
-        }
-
-        // Sonido de advertencia a los 15 segundos
-        if (_remainingSeconds == 15) {
-          FeedbackService.playTimerWarning();
-        }
-
-        // Sonido de tick a los 3 segundos
-        if (_remainingSeconds == 3) {
+        // Timer tick de 59s a 11s
+        if (_remainingSeconds >= 11 && _remainingSeconds <= 59) {
           FeedbackService.playTimerTick();
         }
 
-        // Advertencia cada 10 segundos en los últimos 30
-        if (_remainingSeconds <= 30 && _remainingSeconds % 10 == 0) {
-          FeedbackService.lightVibration();
+        // Timer warning de 10s a 1s
+        if (_remainingSeconds >= 1 && _remainingSeconds <= 10) {
+          FeedbackService.playTimerWarning();
         }
       } else {
         timer.cancel();
@@ -127,6 +116,7 @@ class _DebateTimerScreenState extends State<DebateTimerScreen>
           IconButton(
             icon: const Icon(Icons.info_outline),
             onPressed: () {
+              FeedbackService.playButtonTap();
               FeedbackService.lightVibration();
               _showDebateInfo();
             },
@@ -291,6 +281,7 @@ class _DebateTimerScreenState extends State<DebateTimerScreen>
                 elevation: 8,
               ),
               onPressed: () {
+                FeedbackService.playButtonTap();
                 FeedbackService.mediumVibration();
                 _navigateToVoting();
               },

@@ -62,7 +62,8 @@ class _HomeScreenState extends State<HomeScreen>
     // Validación final para asegurar que la configuración es consistente
     if (mounted) {
       setState(() {
-        final maxImpostors = _calculateMaxImpostors(_playerNames.length).toDouble();
+        final maxImpostors =
+            _calculateMaxImpostors(_playerNames.length).toDouble();
         if (_impostorCount > maxImpostors) {
           _impostorCount = maxImpostors;
         }
@@ -78,7 +79,8 @@ class _HomeScreenState extends State<HomeScreen>
         setState(() {
           _playerNames = savedNames;
           // Ajustar impostores según la cantidad de jugadores
-          _impostorCount = _calculateMaxImpostors(_playerNames.length).toDouble();
+          _impostorCount =
+              _calculateMaxImpostors(_playerNames.length).toDouble();
         });
       }
     } catch (e) {
@@ -100,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen>
           _impostorCount = settings['impostorCount'];
         }
       });
-      
+
       // Aplicar configuraciones globales
       FeedbackService.setSoundEnabled(_soundEffects);
       FeedbackService.setVibrationEnabled(_vibration);
@@ -328,7 +330,10 @@ class _HomeScreenState extends State<HomeScreen>
                   title: 'Jugadores',
                   value: '${_playerNames.length}',
                   icon: Icons.people_outline,
-                  onTap: () => _showPlayerModal(context),
+                  onTap: () {
+                    FeedbackService.playButtonTap();
+                    _showPlayerModal(context);
+                  },
                 ),
                 const SizedBox(height: 16),
 
@@ -337,7 +342,10 @@ class _HomeScreenState extends State<HomeScreen>
                   title: 'Categorías',
                   value: '${_selectedCategories.length} seleccionadas',
                   icon: Icons.category_outlined,
-                  onTap: () => _showCategoryModal(context),
+                  onTap: () {
+                    FeedbackService.playButtonTap();
+                    _showCategoryModal(context);
+                  },
                 ),
                 const SizedBox(height: 16),
 
@@ -432,6 +440,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     value: _impostorHint,
                     onChanged: (bool value) {
+                      FeedbackService.playMenuSelect();
                       FeedbackService.lightVibration();
                       setState(() {
                         _impostorHint = value;
@@ -490,7 +499,10 @@ class _HomeScreenState extends State<HomeScreen>
                   child: AnimatedButton(
                     text: 'INICIAR JUEGO',
                     icon: Icons.play_arrow_rounded,
-                    onPressed: _startGame,
+                    onPressed: () {
+                      FeedbackService.playButtonTap();
+                      _startGame();
+                    },
                     variant: AnimatedButtonVariant.primary,
                     width: double.infinity,
                     height: 60,
@@ -641,7 +653,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     value: _soundEffects,
                     onChanged: (bool value) {
-                      FeedbackService.playButtonTap();
+                      FeedbackService.playMenuSelect();
                       setState(() {
                         _soundEffects = value;
                         _saveSettings();
@@ -694,7 +706,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     value: _vibration,
                     onChanged: (bool value) {
-                      FeedbackService.playButtonTap();
+                      FeedbackService.playMenuSelect();
                       setState(() {
                         _vibration = value;
                         _saveSettings();
@@ -744,10 +756,11 @@ class _HomeScreenState extends State<HomeScreen>
                         color: AppColors.acentoCTA.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(Icons.help_outline,
-                          color: AppColors.acentoCTA,
+                      child: Icon(
+                        Icons.help_outline,
+                        color: AppColors.acentoCTA,
+                      ),
                     ),
-                  ),
                     title: Text('Cómo Jugar',
                         style: TextStyle(
                           color: AppColors.textoPrincipal,
@@ -811,7 +824,7 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'v1.0.0 • ${DateTime.now().year}',
+                  'v1.0.2 • ${DateTime.now().year}',
                   style: TextStyle(
                     color: AppColors.textoSecundario.withOpacity(0.6),
                     fontSize: 11,

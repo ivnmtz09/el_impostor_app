@@ -86,6 +86,7 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
   }
 
   void _nextPlayer() {
+    FeedbackService.playButtonTap();
     FeedbackService.lightVibration();
     setState(() {
       if (_currentPlayerIndex < _assignedRoles.length - 1) {
@@ -117,12 +118,13 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
     final PlayerRole currentPlayer = _assignedRoles[_currentPlayerIndex];
     if (currentPlayer.isImpostor) {
       FeedbackService.impostorRevealVibration();
-      FeedbackService.playRevealImpostor();
     } else {
       FeedbackService.playerRevealVibration();
-      FeedbackService.playRevealPlayer();
     }
-    FeedbackService.playCardFlip();
+    // Pequeño delay para que el sonido de card_flip no se superponga
+    Future.delayed(const Duration(milliseconds: 200), () {
+      FeedbackService.playCardFlip();
+    });
   }
 
   @override
@@ -211,7 +213,8 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
                                   ? AppColors.impostorBorder
                                   : AppColors.playerBorder)
                               : AppColors.acentoCTA)
-                          .withOpacity(0.1), // Reducido de 0.2 a 0.1 para menos reflectancia
+                          .withOpacity(
+                              0.1), // Reducido de 0.2 a 0.1 para menos reflectancia
                       blurRadius: 10, // Reducido de 15 a 10
                       spreadRadius: 0, // Reducido de 1 a 0
                     ),
@@ -236,7 +239,12 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
               child: AnimatedButton(
                 text: isLastPlayer ? 'EMPEZAR JUEGO' : 'SIGUIENTE JUGADOR',
                 icon: isLastPlayer ? Icons.play_arrow : Icons.arrow_forward,
-                onPressed: _isCardRevealed ? _nextPlayer : () {},
+                onPressed: _isCardRevealed
+                    ? () {
+                        FeedbackService.playButtonTap();
+                        _nextPlayer();
+                      }
+                    : () {},
                 enabled: _isCardRevealed,
                 variant: AnimatedButtonVariant.primary,
                 width: double.infinity,
@@ -347,12 +355,14 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: AppColors.fondoSecundario.withOpacity(0.3), // Reducido de 0.5 a 0.3
+              color: AppColors.fondoSecundario
+                  .withOpacity(0.3), // Reducido de 0.5 a 0.3
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: (role.isImpostor
-                    ? AppColors.impostorBorder
-                    : AppColors.playerBorder).withOpacity(0.5), // Reducida opacidad del borde
+                        ? AppColors.impostorBorder
+                        : AppColors.playerBorder)
+                    .withOpacity(0.5), // Reducida opacidad del borde
                 width: 1,
               ),
             ),
@@ -362,7 +372,8 @@ class _RoleRevealScreenState extends State<RoleRevealScreen>
                   : role.word,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.textoPrincipal.withOpacity(0.9), // Ligeramente más apagado
+                color: AppColors.textoPrincipal
+                    .withOpacity(0.9), // Ligeramente más apagado
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),

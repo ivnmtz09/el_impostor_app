@@ -25,15 +25,16 @@ class _GameResultScreenState extends State<GameResultScreen> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
-    
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 3));
+
     // Esperar a que el widget esté completamente montado antes de iniciar animaciones
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      
+
       // Determinar si los honestos ganaron
       final bool impostorWasCaught = widget.votedPlayer.isImpostor;
-      
+
       // Reproducir sonido y vibración
       if (impostorWasCaught) {
         FeedbackService.playWinSound();
@@ -86,8 +87,10 @@ class _GameResultScreenState extends State<GameResultScreen> {
     }
 
     final String secretWord = widget.playerRoles.first.word;
-    final String impostorNames =
-        widget.playerRoles.where((r) => r.isImpostor).map((r) => r.name).join(', ');
+    final String impostorNames = widget.playerRoles
+        .where((r) => r.isImpostor)
+        .map((r) => r.name)
+        .join(', ');
 
     return Scaffold(
       backgroundColor: AppColors.fondoSecundario,
@@ -112,7 +115,7 @@ class _GameResultScreenState extends State<GameResultScreen> {
               gravity: 0.3,
             ),
           ),
-          
+
           // Contenido
           Padding(
             padding: const EdgeInsets.all(24.0),
@@ -124,7 +127,8 @@ class _GameResultScreenState extends State<GameResultScreen> {
                 TweenAnimationBuilder(
                   tween: Tween<double>(begin: 0.0, end: 1.0),
                   duration: const Duration(milliseconds: 600),
-                  curve: Curves.easeOut, // Cambiado de elasticOut a easeOut para evitar problemas
+                  curve: Curves
+                      .easeOut, // Cambiado de elasticOut a easeOut para evitar problemas
                   builder: (context, double value, child) {
                     if (!mounted) return const SizedBox.shrink();
                     return Transform.scale(
@@ -146,7 +150,7 @@ class _GameResultScreenState extends State<GameResultScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Mensaje (con verificación de mounted)
                 TweenAnimationBuilder(
                   tween: Tween<double>(begin: 0.0, end: 1.0),
@@ -170,15 +174,17 @@ class _GameResultScreenState extends State<GameResultScreen> {
                 const SizedBox(height: 40),
                 const Divider(color: Colors.white24),
                 const SizedBox(height: 40),
-                
+
                 // Información con animación escalonada
-                _buildInfoRow('El jugador votado fue:', widget.votedPlayer.name, 1000),
+                _buildInfoRow(
+                    'El jugador votado fue:', widget.votedPlayer.name, 1000),
                 const SizedBox(height: 20),
-                _buildInfoRow('El/Los Impostor(es) era(n):', impostorNames, 1200),
+                _buildInfoRow(
+                    'El/Los Impostor(es) era(n):', impostorNames, 1200),
                 const SizedBox(height: 20),
                 _buildInfoRow('La palabra secreta era:', secretWord, 1400),
                 const SizedBox(height: 60),
-                
+
                 // Botón de Jugar de Nuevo (con verificación de mounted)
                 TweenAnimationBuilder(
                   tween: Tween<double>(begin: 0.0, end: 1.0),
@@ -197,8 +203,10 @@ class _GameResultScreenState extends State<GameResultScreen> {
                     text: 'JUGAR DE NUEVO',
                     icon: Icons.refresh,
                     onPressed: () {
+                      FeedbackService.playButtonTap();
                       if (mounted) {
-                        Navigator.of(context).popUntil((route) => route.isFirst);
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
                       }
                     },
                     variant: AnimatedButtonVariant.primary,

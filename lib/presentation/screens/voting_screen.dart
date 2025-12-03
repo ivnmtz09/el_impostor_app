@@ -133,8 +133,8 @@ class _VotingScreenState extends State<VotingScreen> {
                           child: InkWell(
                             onTap: () {
                               setState(() => _selectedPlayer = playerRole);
+                              FeedbackService.playButtonTap();
                               FeedbackService.lightVibration();
-                              FeedbackService.playVoteSubmit();
                             },
                             borderRadius: BorderRadius.circular(12),
                             child: Container(
@@ -153,7 +153,8 @@ class _VotingScreenState extends State<VotingScreen> {
                                 boxShadow: isSelected
                                     ? [
                                         BoxShadow(
-                                          color: AppColors.acentoCTA.withOpacity(0.3),
+                                          color: AppColors.acentoCTA
+                                              .withOpacity(0.3),
                                           blurRadius: 8,
                                           spreadRadius: 2,
                                         ),

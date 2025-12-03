@@ -23,12 +23,11 @@ class FeedbackService {
   static Future<void> preloadSounds() async {
     final sounds = [
       'button_tap.mp3',
+      'menu_select.mp3',
       'card_flip.mp3',
       'timer_tick.mp3',
       'timer_warning.mp3',
       'vote_submit.mp3',
-      'reveal_impostor.mp3',
-      'reveal_player.mp3',
       'win.mp3',
       'lose.mp3',
     ];
@@ -36,6 +35,22 @@ class FeedbackService {
     for (final sound in sounds) {
       try {
         final player = AudioPlayer();
+        // Configurar modo de baja latencia para efectos de sonido cortos
+        await player.setAudioContext(
+          AudioContext(
+            iOS: AudioContextIOS(
+              options: {
+                AVAudioSessionOptions.duckOthers,
+              },
+              category: AVAudioSessionCategory.ambient,
+            ),
+            android: AudioContextAndroid(
+              audioFocus: AndroidAudioFocus.none,
+            ),
+          ),
+        );
+        // Establecer volumen al máximo
+        await player.setVolume(1.0);
         await player.setSource(AssetSource('sounds/$sound'));
         _soundCache[sound] = player;
       } catch (e) {
@@ -51,9 +66,25 @@ class FeedbackService {
     try {
       final player = _soundCache[soundFile];
       if (player != null) {
-        await player.resume();
+        try {
+          // Detener la reproducción actual si está en curso
+          await player.stop();
+          // Ir al inicio del archivo
+          await player.seek(Duration.zero);
+          // Reproducir desde el principio
+          await player.resume();
+        } catch (e) {
+          // Si hay error con seek/stop, intentar reproducir directamente
+          print('Error en seek/stop para $soundFile, reintentando: $e');
+          try {
+            await player.play(AssetSource('sounds/$soundFile'));
+          } catch (retryError) {
+            print('Error al reproducir $soundFile en reintento: $retryError');
+          }
+        }
       } else {
         // Fallback si no está en caché
+        await _audioPlayer.stop();
         await _audioPlayer.play(AssetSource('sounds/$soundFile'));
       }
     } catch (e) {
@@ -65,7 +96,8 @@ class FeedbackService {
   static Future<void> lightVibration() async {
     if (!_vibrationEnabled) return;
 
-    if (await Vibration.hasVibrator() ?? false) {
+    final hasVibrator = await Vibration.hasVibrator();
+    if (hasVibrator == true) {
       Vibration.vibrate(duration: 50);
     } else {
       HapticFeedback.lightImpact();
@@ -76,7 +108,8 @@ class FeedbackService {
   static Future<void> mediumVibration() async {
     if (!_vibrationEnabled) return;
 
-    if (await Vibration.hasVibrator() ?? false) {
+    final hasVibrator = await Vibration.hasVibrator();
+    if (hasVibrator == true) {
       Vibration.vibrate(duration: 100);
     } else {
       HapticFeedback.mediumImpact();
@@ -87,7 +120,8 @@ class FeedbackService {
   static Future<void> heavyVibration() async {
     if (!_vibrationEnabled) return;
 
-    if (await Vibration.hasVibrator() ?? false) {
+    final hasVibrator = await Vibration.hasVibrator();
+    if (hasVibrator == true) {
       Vibration.vibrate(duration: 200);
     } else {
       HapticFeedback.heavyImpact();
@@ -98,7 +132,8 @@ class FeedbackService {
   static Future<void> impostorRevealVibration() async {
     if (!_vibrationEnabled) return;
 
-    if (await Vibration.hasVibrator() ?? false) {
+    final hasVibrator = await Vibration.hasVibrator();
+    if (hasVibrator == true) {
       Vibration.vibrate(
         pattern: [0, 100, 50, 100, 50, 200],
       );
@@ -113,7 +148,8 @@ class FeedbackService {
   static Future<void> playerRevealVibration() async {
     if (!_vibrationEnabled) return;
 
-    if (await Vibration.hasVibrator() ?? false) {
+    final hasVibrator = await Vibration.hasVibrator();
+    if (hasVibrator == true) {
       Vibration.vibrate(duration: 150);
     } else {
       HapticFeedback.mediumImpact();
@@ -124,7 +160,8 @@ class FeedbackService {
   static Future<void> timeWarningVibration() async {
     if (!_vibrationEnabled) return;
 
-    if (await Vibration.hasVibrator() ?? false) {
+    final hasVibrator = await Vibration.hasVibrator();
+    if (hasVibrator == true) {
       Vibration.vibrate(
         pattern: [0, 100, 100, 100],
       );
@@ -135,14 +172,16 @@ class FeedbackService {
 
   static Future<void> victoryVibration() async {
     if (!_vibrationEnabled) return;
-    if (await Vibration.hasVibrator() ?? false) {
+    final hasVibrator = await Vibration.hasVibrator();
+    if (hasVibrator == true) {
       await Vibration.vibrate(pattern: [0, 100, 200, 100, 200, 400]);
     }
   }
 
   static Future<void> defeatVibration() async {
     if (!_vibrationEnabled) return;
-    if (await Vibration.hasVibrator() ?? false) {
+    final hasVibrator = await Vibration.hasVibrator();
+    if (hasVibrator == true) {
       await Vibration.vibrate(pattern: [0, 500, 100, 500]);
     }
   }
@@ -151,6 +190,10 @@ class FeedbackService {
 
   static Future<void> playButtonTap() async {
     await _playSound('button_tap.mp3');
+  }
+
+  static Future<void> playMenuSelect() async {
+    await _playSound('menu_select.mp3');
   }
 
   static Future<void> playCardFlip() async {
@@ -167,14 +210,6 @@ class FeedbackService {
 
   static Future<void> playVoteSubmit() async {
     await _playSound('vote_submit.mp3');
-  }
-
-  static Future<void> playRevealImpostor() async {
-    await _playSound('reveal_impostor.mp3');
-  }
-
-  static Future<void> playRevealPlayer() async {
-    await _playSound('reveal_player.mp3');
   }
 
   static Future<void> playWinSound() async {
